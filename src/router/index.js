@@ -6,7 +6,7 @@ import topNav from '@/components/topNav'
 import content from '@/components/content'
 import footer from '@/components/footer'
 import framewrok from '@/views/framework'
-import index from '@/views/index'
+import home from '@/views/home'
 
 Vue.use(Router)
 
@@ -23,11 +23,10 @@ export default new Router({
       component: register
     },
     {
-      path: '/index',
-      name: 'index',
+      path: '/',
       component: framewrok,
       children: [{
-        path: 'index2',
+        path: '/',
         components: {
           header: topNav,
           content: content,
@@ -35,12 +34,23 @@ export default new Router({
         },
         children: [
           {
-            path: 'index',
-            name: 'index3',
-            component: index
+            path: 'home',
+            name: 'home',
+            component: home
+          },
+          {
+            path: 'orderList',
+            name: 'orderList',
+            component: () => import('@/views/order/orderList.vue')
+          },
+          {
+            path: 'orderItem/:id',
+            name: 'orderItem',
+            component: () => import('@/views/order/orderItem.vue')
           }
         ]
-      }]
+      }
+      ]
     }
   ]
 })

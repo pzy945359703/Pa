@@ -1,12 +1,25 @@
 <template>
   <div >
-    <div class="top-nav">
-      <!-- <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="1">登陆</el-menu-item>
-        <el-menu-item index="2">个人中心</el-menu-item>
-        <el-menu-item index="3" >消息中心</el-menu-item>
-        <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
-      </el-menu> -->
+    <div class="top-nav container">
+      <div style="float:right">
+        <el-menu :default-active="activeIndex" mode="horizontal" background-color="white" router @select="handleSelect">
+          <!-- <el-menu-item index="1">登陆</el-menu-item> -->
+          <el-submenu index="2">
+            <template slot="title">我的工作台</template>
+            <el-menu-item index="2-1">选项1</el-menu-item>
+            <el-menu-item index="2-2">选项2</el-menu-item>
+            <el-menu-item index="2-3">选项3</el-menu-item>
+            <el-submenu index="2-4">
+              <template slot="title">选项4</template>
+              <el-menu-item index="2-4-1">选项1</el-menu-item>
+              <el-menu-item index="2-4-2">选项2</el-menu-item>
+              <el-menu-item index="2-4-3">选项3</el-menu-item>
+            </el-submenu>
+          </el-submenu>
+          <el-menu-item index="3" >消息中心</el-menu-item>
+          <el-menu-item index="orderList">我的订单</el-menu-item>
+        </el-menu>
+      </div>
     </div>
     <div class="search-nav">
       <el-input v-model="input3" placeholder="请输入内容" class="input-with-select">
@@ -20,7 +33,7 @@
 export default {
   data() {
     return {
-      activeIndex: '1',
+      activeIndex: 'orderList',
       input3: ''
     }
   },
@@ -37,8 +50,8 @@ export default {
 
 <style>
 .top-nav {
-    height: 50px;
-    background-color: #333333;
+    height: 61px;
+    background-color: white;
     color:#666666;
 }
 .search-nav {

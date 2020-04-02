@@ -2,7 +2,7 @@
   <!-- 上下布局  -->
   <div id="index" >
     <router-view class="view header" name="header"/>
-    <div class="content" >
+    <div class="content container" >
       <router-view class="view menu" name="content"/>
     </div>
     <div style="background-color:#333333;" >
@@ -31,5 +31,6 @@ export default {
 
 .content {
   background-color: rgb(245,245,245);
+  margin-bottom: 20px;
 }
 </style>

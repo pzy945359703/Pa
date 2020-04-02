@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div>
       <el-carousel height="150px">
         <el-carousel-item v-for="item in carousel" :key="item.title">

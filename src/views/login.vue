@@ -54,7 +54,7 @@ export default {
     login() {
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
-          this.$router.push({ name: 'index3' })
+          this.$router.push({ name: 'home' })
         } else {
           //
         }
