@@ -17,6 +17,15 @@ body {
 html,body,#app {
   height: 100%;
 }
+.container {
+  width:80%;
+  margin-left:auto;
+  margin-right:auto;
+}
+.white-panel{
+  margin-top:20px;
+  background-color:white
+}
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
