@@ -47,6 +47,16 @@ export default new Router({
             path: 'orderItem/:id',
             name: 'orderItem',
             component: () => import('@/views/order/orderItem.vue')
+          },
+          {
+            path: 'personalCenter/changePassword',
+            name: 'changePassword',
+            component: () => import('@/views/personalCenter/changePassword.vue')
+          },
+          {
+            path: 'project/:id',
+            name: 'projectItem',
+            component: () => import('@/views/project/project.vue')
           }
         ]
       }

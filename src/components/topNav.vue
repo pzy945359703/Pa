@@ -4,7 +4,8 @@
       <div style="float:right">
         <el-menu :default-active="activeIndex" mode="horizontal" background-color="white" router @select="handleSelect">
           <!-- <el-menu-item index="1">登陆</el-menu-item> -->
-          <el-submenu index="2">
+          <el-menu-item index="personalCenter/changePassword">个人中心</el-menu-item>
+          <el-submenu index="personalCenter">
             <template slot="title">我的工作台</template>
             <el-menu-item index="2-1">选项1</el-menu-item>
             <el-menu-item index="2-2">选项2</el-menu-item>

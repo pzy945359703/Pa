@@ -101,14 +101,8 @@ export default {
     color: rgb(153, 153, 153);
     line-height: 36px;
 }
-.theme-color__background {
-  background-color:#1ABC94;
-}
 .theme-color__word {
   color:#1ABC94;
-}
-.white-word {
-  color:#ffffff
 }
 a {
   cursor:pointer;

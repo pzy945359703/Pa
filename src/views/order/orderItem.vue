@@ -1,6 +1,8 @@
 <template>
   <div >
     <el-card>
+      <span style="color: rgb(102, 102, 102);font-size: 16px;font-family: 'Microsoft YaHei';font-weight: 800;padding-left: 10px;">订单详情</span>
+      <el-divider/>
       <div style="margin:40px auto;width:90%;color:#999;font-size:12px">
         <span>订单号：{{ orderId }}</span>
         <el-divider direction="vertical"/>

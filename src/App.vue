@@ -26,6 +26,12 @@ html,body,#app {
   margin-top:20px;
   background-color:white
 }
+.theme-color__background {
+  background-color:#1ABC94;
+}
+.white-word {
+  color:#ffffff
+}
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
