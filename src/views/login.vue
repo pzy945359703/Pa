@@ -14,11 +14,11 @@
             </p>
           </div>
           <el-form ref="loginForm" :model="userForm" :rules="loginFormRole">
-            <el-form-item prop="userName">
-              <el-input v-model="userForm.userName" prefix-icon="el-icon-user-solid" placeholder="请输入用户名"/>
+            <el-form-item prop="phone">
+              <el-input v-model="userForm.phone" prefix-icon="el-icon-user-solid" placeholder="请输入手机号"/>
             </el-form-item>
-            <el-form-item prop="passWord">
-              <el-input v-model="userForm.passWord" prefix-icon="el-icon-lock" type="password" placeholder="请输入密码"/>
+            <el-form-item prop="password">
+              <el-input v-model="userForm.password" prefix-icon="el-icon-lock" type="password" placeholder="请输入密码"/>
             </el-form-item>
             <el-button class="theme-color__background white-word" style="width:100%" @click="login()">登陆</el-button>
             <div >
@@ -37,24 +37,37 @@
 </template>
 
 <script>
+import { login } from '../api/user'
+
 export default {
   data() {
     return {
       userForm: {
-        userName: '',
-        passWord: ''
+        phone: '',
+        password: ''
       },
       loginFormRole: {
-        userName: { required: true, message: '请输入用户名', trigger: 'blur' },
-        passWord: { required: true, message: '请输入密码', trigger: 'blur' }
+        phone: { required: true, message: '请输入手机号', trigger: 'blur' },
+        password: { required: true, message: '请输入密码', trigger: 'blur' }
       }
     }
+  },
+  mounted() {
   },
   methods: {
     login() {
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
-          this.$router.push({ name: 'home' })
+          login(this.userForm).then(res => {
+            console.log(res.data.data)
+            sessionStorage.setItem('userInfo', JSON.stringify(res.data.data))
+            this.$router.push({ name: 'index', params: { showAll: 'true', queryName: 'a' }})
+          }).catch(response => {
+            this.$notify({
+              title: '提示',
+              message: '用户不存在或密码不正确'
+            })
+          })
         } else {
           //
         }

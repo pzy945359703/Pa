@@ -6,7 +6,6 @@ import topNav from '@/components/topNav'
 import content from '@/components/content'
 import footer from '@/components/footer'
 import framewrok from '@/views/framework'
-import home from '@/views/home'
 
 Vue.use(Router)
 
@@ -14,6 +13,10 @@ export default new Router({
   routes: [
     {
       path: '/',
+      redirect: 'login'
+    },
+    {
+      path: '/login',
       name: 'login',
       component: login
     },
@@ -23,7 +26,7 @@ export default new Router({
       component: register
     },
     {
-      path: '/',
+      path: '/home',
       component: framewrok,
       children: [{
         path: '/',
@@ -32,11 +35,12 @@ export default new Router({
           content: content,
           footer: footer
         },
+        redirect: 'index',
         children: [
           {
-            path: 'home',
-            name: 'home',
-            component: home
+            path: 'index/:showAll/:queryName',
+            name: 'index',
+            component: () => import('@/views/home.vue')
           },
           {
             path: 'orderList',
@@ -57,6 +61,11 @@ export default new Router({
             path: 'project/:id',
             name: 'projectItem',
             component: () => import('@/views/project/project.vue')
+          },
+          {
+            path: 'projectComment/:id',
+            name: 'projectComment',
+            component: () => import('@/views/project/comment.vue')
           }
         ]
       }

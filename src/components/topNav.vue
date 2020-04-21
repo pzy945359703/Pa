@@ -1,49 +1,49 @@
 <template>
   <div >
     <div class="top-nav container">
-      <div style="float:right">
-        <el-menu :default-active="activeIndex" mode="horizontal" background-color="white" router @select="handleSelect">
+      <div >
+        <el-menu :default-active="activeIndex" mode="horizontal" background-color="white" router >
           <!-- <el-menu-item index="1">登陆</el-menu-item> -->
-          <el-menu-item index="personalCenter/changePassword">个人中心</el-menu-item>
+          <el-menu-item index="/home/index/true/1">主页</el-menu-item>
+          <!-- <el-menu-item index="/personalCenter/changePassword">个人中心</el-menu-item> -->
           <el-submenu index="personalCenter">
-            <template slot="title">我的工作台</template>
-            <el-menu-item index="2-1">选项1</el-menu-item>
-            <el-menu-item index="2-2">选项2</el-menu-item>
-            <el-menu-item index="2-3">选项3</el-menu-item>
-            <el-submenu index="2-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="2-4-1">选项1</el-menu-item>
-              <el-menu-item index="2-4-2">选项2</el-menu-item>
-              <el-menu-item index="2-4-3">选项3</el-menu-item>
-            </el-submenu>
+            <template slot="title">{{ userName }}</template>
+            <el-menu-item index="/home/orderList">我的订单</el-menu-item>
+            <el-menu-item index="/home/personalCenter/changePassword">修改密码</el-menu-item>
+            <el-menu-item index="/login">退出登录</el-menu-item>
           </el-submenu>
-          <el-menu-item index="3" >消息中心</el-menu-item>
-          <el-menu-item index="orderList">我的订单</el-menu-item>
+          <!-- <el-menu-item index="3" >消息中心</el-menu-item> -->
         </el-menu>
       </div>
     </div>
     <div class="search-nav">
       <el-input v-model="input3" placeholder="请输入内容" class="input-with-select">
-        <i slot="suffix" class="el-input__icon el-icon-search" @click="what"/>
+        <i slot="suffix" style="cursor:pointer" class="el-input__icon el-icon-search" @click="queryProject"/>
       </el-input>
     </div>
   </div>
 </template>
 
 <script>
+
 export default {
   data() {
     return {
       activeIndex: 'orderList',
-      input3: ''
+      input3: '',
+      userName: JSON.parse(sessionStorage.getItem('userInfo')).nikename
     }
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath)
-    },
-    what() {
-      console.log(1)
+    queryProject() {
+      // this.$router.push({ name: 'index', params: { showAll: 'false', queryName: this.input3 }})
+      this.$router.replace({
+        name: 'index',
+        params: {
+          showAll: 'false', queryName: this.input3
+        }
+      })
+      // this.$router.push({ name: 'index', query: { showAll: 'true' }})
     }
   }
 }
@@ -61,8 +61,5 @@ export default {
     margin: auto;
     padding-top: 20px;
     padding-bottom: 20px;
-}
-.el-input__icon .el-icon-search{
-  cursor:pointer;
 }
 </style>

@@ -20,31 +20,43 @@
             </p>
           </div>
           <div style="padding-left:20%;padding-right:20%" align="center">
-            <el-form ref="loginForm" :model="registerUser" :rules="loginFormRole" style="width:300px;" >
-              <el-form-item prop="userName" >
-                <el-input v-model="registerUser.userName" placeholder="设置用户名称"/>
+            <el-form ref="loginForm" :model="registerUserForm" :rules="loginFormRole" style="width:300px;" >
+              <el-form-item prop="name" >
+                <el-input v-model="registerUserForm.name" placeholder="请输入用户姓名"/>
+              </el-form-item>
+              <el-form-item prop="nikename" >
+                <el-input v-model="registerUserForm.nikename" placeholder="请输入用户昵称"/>
+              </el-form-item>
+              <el-form-item prop="gender" >
+                <el-radio-group v-model="registerUserForm.gender">
+                  <el-radio :label="'男'">男</el-radio>
+                  <el-radio :label="'女'">女</el-radio>
+                </el-radio-group>
               </el-form-item>
               <el-form-item prop="phone" >
-                <el-input v-model="registerUser.phone" type="password" placeholder="输入电话号码"/>
+                <el-input v-model="registerUserForm.phone" placeholder="请输入电话号码"/>
               </el-form-item>
-              <el-form-item prop="passWord" >
-                <el-input v-model="registerUser.passWord" type="password" placeholder="设置6-20位登陆密码"/>
+              <el-form-item prop="mail" >
+                <el-input v-model="registerUserForm.mail" placeholder="请输入邮箱"/>
+              </el-form-item>
+              <el-form-item prop="password" >
+                <el-input v-model="registerUserForm.password" type="password" placeholder="请设置密码"/>
               </el-form-item>
               <el-form-item prop="checkPassword" >
-                <el-input v-model="registerUser.checkPassword" type="password" placeholder="请再次输入密码"/>
+                <el-input v-model="registerUserForm.checkPassword" type="password" placeholder="请再次输入密码"/>
               </el-form-item>
-              <el-form-item label="请选择账户户类型:" prop="registerType" >
-                <el-radio-group v-model="registerUser.registerType">
+              <!-- <el-form-item label="请选择账户户类型:" prop="registerType" >
+                <el-radio-group v-model="registerUserForm.registerType">
                   <el-radio :label="1" >普通用户</el-radio>
                   <el-radio :label="2">管理员</el-radio>
                 </el-radio-group>
-              </el-form-item>
-              <el-form-item v-show="registerUser.registerType==2" prop="authorCode" >
-                <el-input v-model="registerUser.authorCode" placeholder="请输入授权码"/>
-              </el-form-item>
+              </el-form-item> -->
+              <!-- <el-form-item v-show="registerUserForm.registerType==2" prop="authorCode" >
+                <el-input v-model="registerUserForm.authorCode" placeholder="请输入授权码"/>
+              </el-form-item> -->
             </el-form>
             <div style="padding-bottom:30px">
-              <el-button class="theme-color__background white-word" style="width:300px;" @click="register()">立即注册</el-button>
+              <el-button class="theme-color__background white-word" style="width:300px;" @click="registerUser()">立即注册</el-button>
             </div>
           </div>
         </div>
@@ -54,26 +66,57 @@
 </template>
 
 <script>
+import { register, login } from '../api/user'
 export default {
   data() {
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.registerUserForm.password) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginFormRole: {
-        userName: { required: true, message: '请输入用户名', trigger: 'blur' },
-        passWord: { required: true, message: '请输入密码', trigger: 'blur' }
+        name: { required: true, message: '请输入用户名', trigger: 'blur' },
+        nikename: { required: true, message: '请输入昵称', trigger: 'blur' },
+        password: { required: true, message: '请输入密码', trigger: 'blur' },
+        phone: { required: true, message: '请输入电话', trigger: 'blur' },
+        checkPassword: { validator: validatePass2, trigger: 'blur' }
       },
-      registerUser: {
-        userName: '',
-        passWord: '',
+      registerUserForm: {
+        name: '',
+        nikename: '',
+        password: '',
+        gender: '男',
         checkPassword: '',
         phone: '',
-        registerType: 1,
-        authorCode: ''
+        mail: '',
+        permission: '0'
+        // registerType: 1,
+        // authorCode: ''
       }
     }
   },
   methods: {
-    register() {
-      console.log(1)
+    registerUser() {
+      register(this.registerUserForm).then(res => {
+        console.log(typeof res.data.code)
+        if (res.data.code === '200') {
+          login({ phone: this.registerUserForm.phone, password: this.registerUserForm.password }).then(res => {
+            if (res.data.code === '200') {
+              sessionStorage.setItem('userInfo', JSON.stringify(res.data.data))
+              this.$router.push({ name: 'index', params: { showAll: 'true', queryName: 'a' }})
+            } else {
+              this.$message(res.data.data)
+            }
+          })
+        } else {
+          this.$message(res.data.data)
+        }
+      })
     }
   }
 

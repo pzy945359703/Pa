@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { getAllOrderByUserId } from '../../api/order'
+
 export default {
   data() {
     return {
@@ -136,9 +138,15 @@ export default {
       url: ''
     }
   },
+  mounted() {
+    this.fetchData()
+  },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath)
+    fetchData() {
+      var userId = JSON.parse(sessionStorage.getItem('userInfo')).id
+      getAllOrderByUserId(parseInt(userId)).then(res => {
+        console.log(res)
+      })
     },
     what() {
       console.log(1)
