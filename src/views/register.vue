@@ -103,7 +103,6 @@ export default {
   methods: {
     registerUser() {
       register(this.registerUserForm).then(res => {
-        console.log(typeof res.data.code)
         if (res.data.code === '200') {
           login({ phone: this.registerUserForm.phone, password: this.registerUserForm.password }).then(res => {
             if (res.data.code === '200') {

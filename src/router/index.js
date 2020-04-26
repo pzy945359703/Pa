@@ -45,27 +45,42 @@ export default new Router({
           {
             path: 'orderList',
             name: 'orderList',
-            component: () => import('@/views/order/orderList.vue')
+            component: () => import('@/views/order/orderList.vue'),
+            meta: {
+              title: '订单列表'
+            }
+          },
+          {
+            path: 'submitOrder/:projectId',
+            name: 'submitOrder',
+            component: () => import('@/views/order/submitOrder.vue'),
+            meta: {
+              title: '确认订单'
+            }
           },
           {
             path: 'orderItem/:id',
             name: 'orderItem',
-            component: () => import('@/views/order/orderItem.vue')
+            component: () => import('@/views/order/orderItem.vue'),
+            meta: {
+              title: '订单详情'
+            }
           },
           {
             path: 'personalCenter/changePassword',
             name: 'changePassword',
-            component: () => import('@/views/personalCenter/changePassword.vue')
+            component: () => import('@/views/personalCenter/changePassword.vue'),
+            meta: {
+              title: '修改密码'
+            }
           },
           {
             path: 'project/:id',
             name: 'projectItem',
-            component: () => import('@/views/project/project.vue')
-          },
-          {
-            path: 'projectComment/:id',
-            name: 'projectComment',
-            component: () => import('@/views/project/comment.vue')
+            component: () => import('@/views/project/project.vue'),
+            meta: {
+              title: '项目详情'
+            }
           }
         ]
       }

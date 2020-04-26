@@ -59,7 +59,6 @@ export default {
       this.$refs['loginForm'].validate((valid) => {
         if (valid) {
           login(this.userForm).then(res => {
-            console.log(res.data.data)
             sessionStorage.setItem('userInfo', JSON.stringify(res.data.data))
             this.$router.push({ name: 'index', params: { showAll: 'true', queryName: 'a' }})
           }).catch(response => {

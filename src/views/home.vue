@@ -71,7 +71,6 @@ export default {
   },
   methods: {
     fetchData() {
-      console.log(this.$route)
       if (this.$route.params.showAll === 'true') {
         getAllPorject().then(res => {
           this.porjectList = res.data.data

@@ -36,8 +36,8 @@
                 <span class="metaTitle">测试结果</span>
                 <span v-for="item in testResult" :key="item" class="metaBody">{{ item }}</span>
               </div> -->
-              <div style="margin-top:20px;margin-left:25%">
-                <el-button class="theme-color__background white-word" >提交测试申请</el-button>
+              <div style="margin-top:20px;margin-left:10%">
+                <el-button class="theme-color__background white-word" @click="submitOrder">提交测试申请</el-button>
               </div>
               <div style="margin:20px 0">
                 <span class="metaTitle">服务承诺</span>
@@ -92,39 +92,52 @@
             </div>
           </el-tab-pane>
           <el-tab-pane :label="'用户评价'+commentCount">
-            <el-row :gutter="20">
-              <el-col :span="1" :offset="6">
-                <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
-              </el-col>
-              <el-col :span="6">
-                <div style="display:inline">{{ userName }}</div>
-                <div style="font-size:12px;color:#999999">{{ commomentDateTime }} | {{ testType }}</div>
-              </el-col>
-            </el-row>
-            <el-row v-for="">
-              <el-col :span="12" :offset="7">
-                <div>{{ commomentContent }}</div>
-                <!-- <el-divider/>
-                <el-input placeholder="评论一下吧">
-                  <template slot="append">回复</template>
-                </el-input>
-                <div style="padding:10px 0">
-                  <span>评价回复</span>
-                  <span>{{ commomentReply.length }}</span>
-                </div>
-                <div v-for="item in commomentReply " :key="item.index" style="margin-top:20px">
-                  <el-row>
-                    <el-col :span="2" >
-                      <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
-                    </el-col>
-                    <el-col :span="22">
-                      <div>{{ item.replyUser }}</div>
-                      <div>{{ item.replyContent }}</div>
-                    </el-col>
-                  </el-row>
-                </div> -->
-              </el-col>
-            </el-row>
+            <div v-for="item in commomentList" :key="item.id" style="margin:30px 0">
+              <el-row :gutter="20">
+                <el-col :span="1" :offset="6">
+                  <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
+                </el-col>
+                <el-col :span="6">
+                  <div style="display:inline">{{ item.userId }}</div>
+                  <div style="font-size:12px;color:#999999">{{ commomentDateTime }} | {{ item.type }}</div>
+                </el-col>
+              </el-row>
+              <el-row >
+                <el-col :span="12" :offset="7">
+                  <div>{{ item.description }}</div>
+                  <div style="margin-top:10px">
+                    <span v-for="(pic, index) in item.pictureList" :key="index" >
+                      <el-image
+                        :src="pic"
+                        :preview-src-list = "[pic]"
+                        :style="commentPicStyle"
+                        fit="fill"
+                        @click="fixBug"/>
+                    </span>
+                  </div>
+                  <!--
+                  <el-input placeholder="评论一下吧">
+                    <template slot="append">回复</template>
+                  </el-input>
+                  <div style="padding:10px 0">
+                    <span>评价回复</span>
+                    <span>{{ commomentReply.length }}</span>
+                  </div>
+                  <div v-for="item in commomentReply " :key="item.index" style="margin-top:20px">
+                    <el-row>
+                      <el-col :span="2" >
+                        <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
+                      </el-col>
+                      <el-col :span="22">
+                        <div>{{ item.replyUser }}</div>
+                        <div>{{ item.replyContent }}</div>
+                      </el-col>
+                    </el-row>
+                  </div> -->
+                </el-col>
+              </el-row>
+              <el-divider/>
+            </div>
           </el-tab-pane>
 
         </el-tabs>
@@ -147,8 +160,9 @@ export default {
       contentList: [],
       commomentList: [],
       detailPictures: [],
-      ImgUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+      ImgUrl: '',
       uncheckStyle: { width: '38px', height: '38px', border: '2px solid #666', marginLeft: '10px' },
+      commentPicStyle: { width: '38px', height: '38px', marginRight: '10px' },
       testPlace: '',
       testResult: ['记录飞行用时', '记录到达目标数量'],
       testTitle: '疯狂降落',
@@ -156,7 +170,6 @@ export default {
       circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
       commentCount: 0,
       userName: '李某',
-      commomentContent: '测试效率很快，昨天下单今天就收到了，下次还来',
       commomentDateTime: '2020-01-30 14:33:33',
       testType: '目标识别',
       commomentReply: [{
@@ -182,7 +195,9 @@ export default {
       })
       getAllCommentByPrjectId(parseInt(this.id)).then(res => {
         this.commomentList = res.data.data
-        console.log(this.commomentList)
+        this.commomentList.forEach(item => {
+          item.pictureList = item.picture.split('||')
+        })
         this.commentCount = this.commomentList.length
       })
     },
@@ -191,6 +206,12 @@ export default {
       this.testContent = item
       this.ImgUrl = item.picture
       document.body.style = ''
+    },
+    fixBug() {
+      document.body.style = ''
+    },
+    submitOrder() {
+      this.$router.push({ name: 'submitOrder', params: { projectId: this.id }})
     }
 
   }

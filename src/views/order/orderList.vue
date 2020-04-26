@@ -6,7 +6,6 @@
           <el-table
             :show-header="true"
             :data="item.orderItem"
-            :span-method="objectSpanMethod"
             :header-cell-style="{background:'#F5F7FA',color:'#606266',borderRight: '0px '}"
             border
             style="width: 100%;margin:30px 0px">
@@ -145,14 +144,9 @@ export default {
     fetchData() {
       var userId = JSON.parse(sessionStorage.getItem('userInfo')).id
       getAllOrderByUserId(parseInt(userId)).then(res => {
-        console.log(res)
       })
     },
-    what() {
-      console.log(1)
-    },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      console.log(row)
       if (columnIndex === 1) {
         if (rowIndex !== 0) {
           return {

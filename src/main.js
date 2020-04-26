@@ -21,8 +21,10 @@ new Vue({
 
 router.beforeEach((to, form, next) => {
   if (to.name === 'login') {
-    console.log('移除session')
     sessionStorage.removeItem('userInfo')
+  }
+  if (to.meta.title) {
+    document.title = to.meta.title
   }
   const user = JSON.parse(sessionStorage.getItem('userInfo'))
   if (!user && to.name !== 'login') {

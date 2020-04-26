@@ -10,9 +10,8 @@
             <template slot="title">{{ userName }}</template>
             <el-menu-item index="/home/orderList">我的订单</el-menu-item>
             <el-menu-item index="/home/personalCenter/changePassword">修改密码</el-menu-item>
-            <el-menu-item index="/login">退出登录</el-menu-item>
           </el-submenu>
-          <!-- <el-menu-item index="3" >消息中心</el-menu-item> -->
+          <el-menu-item index="/login" style="float:right">退出</el-menu-item>
         </el-menu>
       </div>
     </div>
