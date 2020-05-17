@@ -23,7 +23,10 @@ export default new Router({
     {
       path: '/register',
       name: 'register',
-      component: register
+      component: register,
+      meta: {
+        title: '注册'
+      }
     },
     {
       path: '/home',
@@ -43,11 +46,27 @@ export default new Router({
             component: () => import('@/views/home.vue')
           },
           {
+            path: 'myOrderList',
+            name: 'myOrderList',
+            component: () => import('@/views/order/userOrderList.vue'),
+            meta: {
+              title: '我的订单'
+            }
+          },
+          {
             path: 'orderList',
             name: 'orderList',
             component: () => import('@/views/order/orderList.vue'),
             meta: {
               title: '订单列表'
+            }
+          },
+          {
+            path: 'contentList',
+            name: 'contentList',
+            component: () => import('@/views/content/contentList.vue'),
+            meta: {
+              title: '测试内容列表'
             }
           },
           {
@@ -78,6 +97,22 @@ export default new Router({
             path: 'project/:id',
             name: 'projectItem',
             component: () => import('@/views/project/project.vue'),
+            meta: {
+              title: '项目详情'
+            }
+          },
+          {
+            path: 'projectList',
+            name: 'projectList',
+            component: () => import('@/views/project/projectList.vue'),
+            meta: {
+              title: '项目列表'
+            }
+          },
+          {
+            path: 'projectDetail/:id',
+            name: 'projectDetail',
+            component: () => import('@/views/project/projectDetail.vue'),
             meta: {
               title: '项目详情'
             }

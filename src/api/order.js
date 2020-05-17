@@ -4,7 +4,8 @@ import { _axios, baseUrl } from '@/plugins/axios'
 export function getAllOrder() {
   return _axios.request({
     url: baseUrl + '/order/listAll',
-    method: 'post'
+    method: 'post',
+    data: {}
   })
 }
 
@@ -23,6 +24,24 @@ export function addOrder(data) {
     url: baseUrl + 'order/add',
     method: 'post',
     data: data
+  })
+}
+
+// 获取订单详情
+export function getOrderInfo(id) {
+  return _axios.request({
+    url: baseUrl + 'order/info',
+    method: 'post',
+    data: { id: id }
+  })
+}
+
+// 删除订单
+export function deleteOrder(id) {
+  return _axios.request({
+    url: baseUrl + 'order/delByOrderId',
+    method: 'post',
+    data: { id: id }
   })
 }
 

@@ -21,15 +21,16 @@
     </el-card>
     <el-card>
       <el-row>
-        <el-col v-for="item in porjectList" :span="7" :offset="1" :key="item.id" style="padding:20px" >
-          <el-card :body-style="{ padding: '0px' }" @click.native="detailView(item.id)">
+        <el-col v-for="item in porjectList" :span="7" :offset="1" :key="item.id" style="padding:20px;height:500px" >
+          <el-card :body-style="{ padding: '0px',height: '400px' }" @click.native="detailView(item.id)">
             <img :src="item.showPictureList[0]" class="image">
+            <!-- <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1588934478372&di=866ae1654006c083f0fe46d00cf242fa&imgtype=0&src=http%3A%2F%2Fcss.chinawj.com.cn%2Fpic%2Fimg.gif" class="image"> -->
             <div style="padding: 14px;">
-              <span>{{ item.name }}</span>
-              <div class="bottom clearfix">
+              <div class="projetcName">{{ item.name }}</div>
+              <div class="bottom clearfix" style="height:100px">
                 <span>{{ item.description }}</span>
               </div>
-              <span>{{ item.price }}</span>
+              <div style="float:right;color:green;padding-bottom:20px">￥{{ item.price }}</div>
             </div>
           </el-card>
         </el-col>
@@ -73,19 +74,11 @@ export default {
     fetchData() {
       if (this.$route.params.showAll === 'true') {
         getAllPorject().then(res => {
-          this.porjectList = res.data.data
-          this.porjectList.forEach(element => {
-            element.detailPictureList = element.detailPicture.split('||')
-            element.showPictureList = element.showPicture.split('||')
-          })
+          this.handlePictures(res)
         })
       } else {
         getPorjectsByName(this.$route.params.queryName).then(res => {
-          this.porjectList = res.data.data
-          this.porjectList.forEach(element => {
-            element.detailPictureList = element.detailPicture.split('||')
-            element.showPictureList = element.showPicture.split('||')
-          })
+          this.handlePictures(res)
         })
       }
       getAllPorjectType().then(res => {
@@ -97,22 +90,25 @@ export default {
     searchProjectByType(item, index) {
       if (item === '全部') {
         getAllPorject().then(res => {
-          this.porjectList = res.data.data
-          this.porjectList.forEach(element => {
-            element.detailPictureList = element.detailPicture.split('||')
-            element.showPictureList = element.showPicture.split('||')
-          })
+          this.handlePictures(res)
         })
       } else {
         getPorjectsByType({ type: item }).then(res => {
-          this.porjectList = res.data.data
-          this.porjectList.forEach(element => {
-            element.detailPictureList = element.detailPicture.split('||')
-            element.showPictureList = element.showPicture.split('||')
-            this.number = index
-          })
+          this.handlePictures(res)
         })
+        this.number = index
       }
+    },
+    handlePictures(res) {
+      this.porjectList = res.data.data
+      this.porjectList.forEach(element => {
+        element.showPictureList = element.showPicture.split('||')
+        element.showPictureList.forEach(function(pic, index, arr) {
+          if (pic.indexOf('http') === -1) {
+            arr[index] = 'http://' + pic
+          }
+        })
+      })
     },
     detailView(id) {
       this.$router.push({ name: 'projectItem', params: { id: id }})
@@ -159,5 +155,9 @@ export default {
   .projectType{
     padding-left:10px;
     cursor:pointer;
+  }
+  .projetcName{
+    font-weight: 700;
+    padding-bottom: 10px;
   }
 </style>

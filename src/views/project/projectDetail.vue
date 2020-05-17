@@ -3,9 +3,8 @@
     <el-card>
       <el-row>
         <el-col :span="6" :offset="3">
-          <div style="width: 300px;height: 300px"> <el-image :src="ImgUrl" :preview-src-list = "showPictures" style="width: 100%;height: 100%" /> </div>
-          <div v-for="url in showPictures" :key="url" style="width: 38px;height: 38px;border:2px solid #666;marginLeft:10px;display:inline-block">
-            <el-image :src=" url" style="width: 100%;height: 100%" @click="setMainPhoto(url)"/>
+          <div class="goodDetails_name_img">
+            <div style="width: 300px;height: 300px"> <el-image :src="ImgUrl" style="width: 100%;height: 100%" /> </div>
           </div>
         </el-col>
         <el-col :span="12" :offset="1" >
@@ -62,19 +61,24 @@
         />
         <div style="margin-top:20px">
           <span class="metaTitle">测试名称</span>
-          <span class="metaBody">{{ testContent.name }}</span>
+          <el-input v-model="testContent.name" type="text" />
         </div>
         <div style="margin-top:20px">
           <span class="metaTitle">测试场地</span>
-          <span class="metaBody">{{ testContent.place }}</span>
+          <el-input v-model="testContent.place" type="text" />
         </div>
         <div style="margin-top:20px">
           <span class="metaTitle">测试类型</span>
-          <span class="metaBody">{{ testContent.type }}</span>
+          <el-input v-model="testContent.type" type="text" />
         </div>
         <div style="margin-top:20px">
           <span class="metaTitle">测试描述</span>
-          <span class="metaBody">{{ testContent.description }}</span>
+          <el-input
+            v-model="testContent.description"
+            type="textarea"
+            placeholder="请输入内容"
+            maxlength="40"
+            show-word-limit/>
         </div>
         <span slot="footer" class="dialog-footer">
           <!-- <el-button @click="dialogVisible = false">取 消</el-button> -->
@@ -85,69 +89,51 @@
     <div class="test-detail">
       <el-row>
         <el-tabs type="border-card">
-          <el-tab-pane label="测试详情">
+          <!-- <el-tab-pane label="测试详情">
             <div style="text-align:center">
               <div v-for="(url, index) in detailPictures" :key="index" style="width:100%">
                 <el-image :src="url"/>
               </div>
             </div>
+          </el-tab-pane> -->
+          <el-tab-pane label="1">
+            <el-table
+              :data="contentList"
+              style="width: 100%">
+              <el-table-column
+                align="center"
+                prop="name"
+                label="项目名称"
+              />
+              <el-table-column
+                align="center"
+                prop="type"
+                label="测试类型"
+              />
+              <el-table-column
+                align="center"
+                prop="place"
+                label="场地"
+              />
+              <el-table-column
+                align="center"
+                prop="description"
+                label="详情"/>
+              <el-table-column align="center" label="操作" >
+                <template slot="header" >
+                  <el-button type="primary" @click="addTestContent">新增测试内容</el-button>
+                </template>
+                <template slot-scope="scope">
+                  <el-dropdown split-button @click="handleEdit(scope.row.id)">
+                    编辑
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="handleDelete(scope.$index, scope.row)">删除</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-tab-pane>
-          <el-tab-pane :label="'用户评价'+commentCount">
-            <div v-if="commomentList.length!=0">
-              <div v-for="item in commomentList" :key="item.id" style="margin:30px 0" >
-                <el-row :gutter="20">
-                  <el-col :span="1" :offset="6">
-                    <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
-                  </el-col>
-                  <el-col :span="6">
-                    <div style="display:inline">{{ item.name }}</div>
-                    <div style="font-size:12px;color:#999999">{{ commomentDateTime }} | {{ item.type }}</div>
-                  </el-col>
-                </el-row>
-                <el-row >
-                  <el-col :span="12" :offset="7">
-                    <div>{{ item.description }}</div>
-                    <div style="margin-top:10px">
-                      <span v-for="(pic, index) in item.pictureList" :key="index" >
-                        <el-image
-                          :src="'http://'+pic"
-                          :style="commentPicStyle"
-                          :preview-src-list = "getPreViewPic(item.pictureList)"
-                          fit="fill"
-                          @click="fixBug"/>
-                      </span>
-                    </div>
-                    <!--
-                    <el-input placeholder="评论一下吧">
-                      <template slot="append">回复</template>
-                    </el-input>
-                    <div style="padding:10px 0">
-                      <span>评价回复</span>
-                      <span>{{ commomentReply.length }}</span>
-                    </div>
-                    <div v-for="item in commomentReply " :key="item.index" style="margin-top:20px">
-                      <el-row>
-                        <el-col :span="2" >
-                          <div style="display:inline"><el-avatar :src="circleUrl" size="large"/></div>
-                        </el-col>
-                        <el-col :span="22">
-                          <div>{{ item.replyUser }}</div>
-                          <div>{{ item.replyContent }}</div>
-                        </el-col>
-                      </el-row>
-                    </div> -->
-                  </el-col>
-                </el-row>
-                <el-divider/>
-              </div>
-            </div>
-            <div v-else>
-              <div style="text-align:center;padding-top:20px;padding-bottom:20px">
-                暂无评论
-              </div>
-            </div>
-          </el-tab-pane>
-
         </el-tabs>
       </el-row>
     </div>
@@ -168,7 +154,6 @@ export default {
       contentList: [],
       commomentList: [],
       detailPictures: [],
-      showPictures: [],
       ImgUrl: '',
       uncheckStyle: { width: '38px', height: '38px', border: '2px solid #666', marginLeft: '10px' },
       commentPicStyle: { width: '38px', height: '38px', marginRight: '10px' },
@@ -200,28 +185,19 @@ export default {
       getPorjectInfo({ id: this.id }).then(res => {
         this.projectInfo = res.data.data
         this.contentList = this.projectInfo.contentList
-        var detailPictureList = this.projectInfo.detailPicture ? this.projectInfo.detailPicture.split('||') : []
-        this.detailPictures = this.handlePictures(detailPictureList)
-        var showPictureList = this.projectInfo.showPicture ? this.projectInfo.showPicture.split('||') : []
-        this.showPictures = this.handlePictures(showPictureList)
-        this.ImgUrl = this.showPictures[0]
+        this.detailPictures = this.projectInfo.detailPicture.split('||')
       })
       getAllCommentByPrjectId(parseInt(this.id)).then(res => {
         this.commomentList = res.data.data
         this.commomentList.forEach(item => {
           console.log(item)
-          item.pictureList = item.picture ? item.picture.split('||') : []
+          item.pictureList = item.picture.split('||')
         })
         this.commentCount = this.commomentList.length
       })
     },
-    getIndex(item) {
+    addTestContent() {
       this.dialogVisible = true
-      this.testContent = item
-      document.body.style = ''
-    },
-    setMainPhoto(item) {
-      this.ImgUrl = item
       document.body.style = ''
     },
     fixBug() {
@@ -229,22 +205,8 @@ export default {
     },
     submitOrder() {
       this.$router.push({ name: 'submitOrder', params: { projectId: this.id }})
-    },
-    getPreViewPic(picList) {
-      var list = []
-      picList.forEach(element => {
-        list.push('http://' + element)
-      })
-      return list
-    },
-    handlePictures(list) {
-      list.forEach(function(pic, index, arr) {
-        if (pic.indexOf('http') === -1) {
-          arr[index] = 'http://' + pic
-        }
-      })
-      return list
     }
+
   }
 }
 </script>

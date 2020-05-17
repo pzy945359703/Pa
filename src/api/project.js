@@ -39,3 +39,19 @@ export function getPorjectInfo(param) {
     data: param
   })
 }
+
+export function addPorject(param) {
+  return _axios.request({
+    url: baseUrl + 'project/add',
+    method: 'post',
+    data: param
+  })
+}
+
+export function deletePorject(id) {
+  return _axios.request({
+    url: baseUrl + 'project/delByProjectId',
+    method: 'post',
+    data: { id: id }
+  })
+}

@@ -7,7 +7,7 @@
           <span class="subtitle">优质测试方案平台</span>
         </div>
         <div align="right">
-          <span class="subtitle">已有账号</span>
+          <span class="subtitle" style="cursor:pointer;" @click="toLogin()">已有账号</span>
         </div>
       </div>
     </div>
@@ -116,6 +116,9 @@ export default {
           this.$message(res.data.data)
         }
       })
+    },
+    toLogin() {
+      this.$router.push({ name: 'login' })
     }
   }
 

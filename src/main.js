@@ -27,7 +27,7 @@ router.beforeEach((to, form, next) => {
     document.title = to.meta.title
   }
   const user = JSON.parse(sessionStorage.getItem('userInfo'))
-  if (!user && to.name !== 'login') {
+  if (!user && (to.name !== 'register' && to.name !== 'login')) {
     next({ name: 'login' })
   } else {
     next()

@@ -1,175 +1,141 @@
 <template>
-  <div >
-    <el-tabs type="border-card">
-      <el-tab-pane label="全部订单">
-        <div v-for="item in orderList" :key="item.id">
-          <el-table
-            :show-header="true"
-            :data="item.orderItem"
-            :header-cell-style="{background:'#F5F7FA',color:'#606266',borderRight: '0px '}"
-            border
-            style="width: 100%;margin:30px 0px">
-            <el-table-column>
-              <template slot="header" >
-                <span style="margin-right:10px">下单时间：{{ item.orderTime }}</span> <span>订单编号：{{ item.id }}</span>
-              </template>
-              <template slot-scope="scope">
-                <div style="margin: auto;display:inline;vertical-align: top">{{ scope.row.testName }}</div>
-                <!-- <el-image
-                  :src="url"
-                  fit="fill"
-                  style="width: 100px; height: 100px;"
-                >
-                  <div slot="error" class="image-slot">
-                    <i class="el-icon-picture-outline"/>
-                  </div>
-                </el-image> -->
-              </template>
-            </el-table-column>
-            <el-table-column
-              width="200px"
-              align="center">
-              <template slot-scope="scope">
-                <div>{{ scope.row.name }}</div>
-                <div>{{ item.state }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              width="200px"
-              align="center">
-              <template slot-scope="scope">
-                <div>
-                  ￥{{ scope.row.money }}
-                </div>
-                <div>
-                  {{ scope.row.paymentMethod }}
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              width="150px"
-              align="center">
-              <template >
-                <div>
-                  <span>查看详情</span>
-                </div>
-                <div v-if="item.state=='已完成'">
-                  <span>申请售后</span>
-                </div>
-                <div v-if="item.state=='测试中'">
-                  <span>取消订单</span>
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </el-tab-pane>
-      <el-tab-pane label="待测试">3</el-tab-pane>
-      <el-tab-pane label="待收货">2</el-tab-pane>
-      <el-tab-pane label="已完成">1</el-tab-pane>
-    </el-tabs>
+  <div>
+    <el-table
+      :data="projectList"
+      border
+      style="width: 100%">
+      <!-- <el-table-column
+        align="center"
+        prop="date"
+        label="日期"
+      /> -->
+      <el-table-column
+        align="center"
+        prop="id"
+        label="订单ID"
+      />
+      <el-table-column
+        align="center"
+        prop="createTime"
+        label="订单创建时间"
+      />
+      <el-table-column
+        align="center"
+        prop="testCompleteTime"
+        label="测试完成时间"
+      />
+      <el-table-column
+        align="center"
+        prop="orderCompleteTime"
+        label="订单完成时间"/>
+      <el-table-column
+        align="center"
+        prop="deleted"
+        label="是否删除">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deleted===true?'是':'否' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="120">
+        <template slot-scope="scope">
+          <el-dropdown split-button @click="handleViewDetail(scope.row.id)">
+            详情
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="handleDelete(scope.row)">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
-import { getAllOrderByUserId } from '../../api/order'
+import { getAllOrder, deleteOrder } from '../../api/order'
+// import { getAllCommentByPrjectId } from '../../api/comment'
 
 export default {
   data() {
     return {
-      orderList: [
-        {
-          id: 1,
-          orderTime: '2020-01-02 21:50:32',
-          orderItem: [{
-            testName: '高空飞行测试-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-            tag: '家',
-            money: 400
-          }, {
-            testName: '高空飞行测试-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄',
-            tag: '公司',
-            money: 400
-          }, {
-            testName: '高空飞行测试-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄',
-            tag: '家',
-            money: 200
-          }, {
-            testName: '高空飞行测试-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄',
-            tag: '公司',
-            money: 299
-          }],
-          state: '已完成'
-        }, {
-          id: 2,
-          orderTime: '2020-01-03 21:50:32',
-          orderItem: [{
-            testName: '高空飞行测试-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄',
-            tag: '家',
-            money: 500,
-            state: '已完成'
-          }, {
-            testName: '高空飞行测试-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄',
-            tag: '家',
-            money: 400,
-            state: '已完成'
-          }, {
-            testName: '高空飞行测试-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄',
-            tag: '公司',
-            money: 100
-          }],
-          state: '测试中'
-        }
-      ],
-      url: ''
+      projectList: []
     }
   },
-  mounted() {
+  beforeMount() {
+    this.id = this.$route.params.id
     this.fetchData()
   },
   methods: {
     fetchData() {
-      var userId = JSON.parse(sessionStorage.getItem('userInfo')).id
-      getAllOrderByUserId(parseInt(userId)).then(res => {
+      getAllOrder().then(res => {
+        if (res.data.code === '200') {
+          this.projectList = res.data.data
+          this.projectList.forEach(element => {
+            element.createTime = new Date(new Date(element.createTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+            element.orderCompleteTime = element.orderCompleteTime == null ? '无' : new Date(new Date(element.orderCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+            element.testCompleteTime = element.testCompleteTime == null ? '无' : new Date(new Date(element.testCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+            element.testPredictTime = element.testPredictTime == null ? '无' : new Date(new Date(element.testPredictTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+          })
+        } else {
+          this.$notify({
+            title: '提示',
+            message: '获取项目列表失败'
+          })
+        }
       })
     },
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 1) {
-        if (rowIndex !== 0) {
-          return {
-            rowspan: 0,
-            colspan: 0
-          }
-        } else {
-          return {
-            rowspan: 4,
-            colspan: 1
-          }
-        }
-      }
+    handleViewDetail(id) {
+      this.$router.push({ name: 'orderItem', params: { id: id }})
+    },
+    handleDelete(item) {
+      console.log(item)
+      this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteOrder(item.id).then(res => {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.fetchData()
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
+
   }
 }
 </script>
 
-<style>
-.el-card__header{
-    background-color: whitesmoke;
+<style scoped>
+.test-detail {
+    margin-top: 20px;
 }
-.el-card__body{
-    background-color:#fdfdfd;
+.metaTitle {
+    color: #838383;
+    font-size:12px
+}
+.metaBody{
+    margin-left: 10px;
+}
+.projectTitle {
+    margin-top:20px;
+    padding-bottom: .2em;
+    line-height: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000;
+}
+.price {
+    margin:20px 0;
+    height: 250px;
+    padding-left: 20px;
+    padding-top: 10px;
+    background-color: #f3f3f3;
 }
 </style>

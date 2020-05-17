@@ -52,9 +52,7 @@ export default {
       userInfo: {},
       orderInfo: {
         userId: '',
-        testPredictTime: '',
-        projectId: 0,
-        createTime: ''
+        projectId: 0
       },
       projectInfo: {},
       contentList: [],
@@ -63,10 +61,12 @@ export default {
   },
   beforeMount() {
     this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    console.log(this.userInfo)
     this.orderInfo.userId = this.userInfo.id
     this.orderInfo.projectId = this.$route.params.projectId
     getPorjectInfo({ id: this.$route.params.projectId }).then(res => {
       this.projectInfo = res.data.data
+      this.orderInfo.price = this.projectInfo.price
       this.contentList = this.projectInfo.contentList
       this.testContentCount = this.contentList.length
       this.detailPictures = this.projectInfo.detailPicture.split('||')
@@ -75,6 +75,7 @@ export default {
   methods: {
     submitOrder() {
       addOrder(this.orderInfo).then(res => {
+        console.log(res)
       })
     }
   }

@@ -8,3 +8,12 @@ export function getAllCommentByPrjectId(id) {
     data: { projectId: id, type: '' }
   })
 }
+
+// 新建评论
+export function addComment(data) {
+  return _axios.request({
+    url: baseUrl + 'comment/add',
+    method: 'post',
+    data: data
+  })
+}
