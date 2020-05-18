@@ -82,6 +82,10 @@
           ref="upload"
           :on-success="handleSuccessForDetail"
           :file-list="fileList"
+          :on-exceed="handleExceed"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :limit="1"
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF"
           class="upload-demo"
           action="http://120.26.88.248:8082/common/uploadFile"
@@ -92,14 +96,14 @@
       </div>
       <div class="demo-drawer__footer">
         <el-button type="primary" @click="submitContent">确 定</el-button>
-        <el-button @click="drawer = false">取 消</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
       </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import { getAllContent, updateContent } from '../../api/content'
+import { getAllContent, updateContent, addContent } from '../../api/content'
 // import { getAllCommentByPrjectId } from '../../api/comment'
 
 export default {
@@ -139,26 +143,51 @@ export default {
       this.drawer = true
       this.contentParam = { id: 0 }
     },
-    handleViewDetail(id) {
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件`)
+    },
+    handleViewDetail(item) {
       // this.$router.push({ name: 'orderItem', params: { id: id }})
       this.drawer = true
-      this.contentParam = id
+      this.contentParam = item
+      this.fileList = item.picture ? [{ url: item.picture }] : []
     },
     submitContent() {
       if (this.contentParam.id === 0) {
-        console.log('新增')
+        addContent(this.contentParam).then(res => {
+          if (res.data.code === '200') {
+            this.$notify({
+              title: '提示',
+              message: '新增测试内容成功'
+            })
+          }
+          this.fetchData()
+        })
       } else {
         updateContent(this.contentParam).then(res => {
-          console.log(res)
+          if (res.data.code === '200') {
+            this.$notify({
+              title: '提示',
+              message: '修改测试内容成功'
+            })
+          }
+          this.fetchData()
         })
       }
       this.contentParam = {}
       this.drawer = false
-      this.fetchData()
     },
     handleClose(done) {
       this.contentParam = {}
+      this.fileList = []
+      this.fetchData()
       done()
+    },
+    handleCancel() {
+      this.contentParam = {}
+      this.fileList = []
+      this.fetchData()
+      this.drawer = false
     },
     handleSuccessForDetail(res, file, fileList) {
       if (res.code === '200') {
@@ -169,6 +198,13 @@ export default {
         this.contentParam.detailPicture = this.contentParam.detailPicture ? this.contentParam.detailPicture + '||' + res.data : res.data
         console.log(fileList)
       }
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除该图片码？`)
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+      this.contentParam.picture = ''
     }
     // handleDelete(item) {
     //   console.log(item)

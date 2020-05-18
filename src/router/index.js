@@ -66,7 +66,7 @@ export default new Router({
             name: 'contentList',
             component: () => import('@/views/content/contentList.vue'),
             meta: {
-              title: '测试内容列表'
+              title: '测试内容管理'
             }
           },
           {
@@ -106,7 +106,7 @@ export default new Router({
             name: 'projectList',
             component: () => import('@/views/project/projectList.vue'),
             meta: {
-              title: '项目列表'
+              title: '项目管理'
             }
           },
           {

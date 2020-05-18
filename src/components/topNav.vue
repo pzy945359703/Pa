@@ -11,9 +11,9 @@
             <el-menu-item index="/home/myOrderList">我的订单</el-menu-item>
             <el-menu-item index="/home/personalCenter/changePassword">修改密码</el-menu-item>
           </el-submenu>
-          <el-menu-item index="/home/projectList">项目列表</el-menu-item>
-          <el-menu-item index="/home/orderList">订单列表</el-menu-item>
-          <el-menu-item index="/home/contentList">测试内容列表</el-menu-item>
+          <el-menu-item index="/home/projectList">项目管理</el-menu-item>
+          <el-menu-item index="/home/orderList">订单管理</el-menu-item>
+          <el-menu-item index="/home/contentList">测试内容管理</el-menu-item>
           <el-menu-item index="/login" style="float:right">退出</el-menu-item>
         </el-menu>
       </div>

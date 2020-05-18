@@ -5,7 +5,7 @@
         <span class="subtitle">优质测试方案平台</span>
       </p>
     </div>
-    <div style="background-color:#bfccd4;height:80%;width:80%;padding-left:10%;padding-right:10%">
+    <div :style="backgroundImg">
       <el-row >
         <el-col :span="8" :offset="15" style="background-color:#ffffff;width:380px;height:500px;margin-top:30px;padding-left:20px;padding-right:20px">
           <div align="center" class="form-title" >
@@ -42,6 +42,16 @@ import { login } from '../api/user'
 export default {
   data() {
     return {
+      backgroundImg: {
+        backgroundImage: 'url(' + require('../assets/timg.jpg') + ')',
+        backgroundColor: '#bfccd4',
+        height: '80%',
+        width: '80%',
+        backgroundRepeat: 'no-repeat',
+        paddingLeft: '10%',
+        paddingRight: '10%',
+        backgroundSize: '100% 100%'
+      },
       userForm: {
         phone: '',
         password: ''

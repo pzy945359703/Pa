@@ -88,7 +88,7 @@
           <el-tab-pane label="测试详情">
             <div style="text-align:center">
               <div v-for="(url, index) in detailPictures" :key="index" style="width:100%">
-                <el-image :src="url"/>
+                <el-image :src="url" style="width: 400px; height: 400px" @click="fixBug" />
               </div>
             </div>
           </el-tab-pane>
