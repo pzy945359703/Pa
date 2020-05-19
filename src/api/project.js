@@ -55,3 +55,11 @@ export function deletePorject(id) {
     data: { id: id }
   })
 }
+
+export function updatePorject(data) {
+  return _axios.request({
+    url: baseUrl + 'project/update',
+    method: 'post',
+    data: data
+  })
+}

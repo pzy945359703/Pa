@@ -87,7 +87,6 @@ export default {
       this.$router.push({ name: 'orderItem', params: { id: id }})
     },
     handleDelete(item) {
-      console.log(item)
       this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

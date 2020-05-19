@@ -1,18 +1,13 @@
 <template>
   <div>
     <div style="padding:10px;float:right">
-      <el-button @click="dialogVisible=true">添加主题</el-button>
+      <el-button @click="clickAddButton()">添加主题</el-button>
     </div>
     <div>
       <el-table
         :data="projectList"
         border
         style="width: 100%">
-        <!-- <el-table-column
-          align="center"
-          prop="date"
-          label="日期"
-        /> -->
         <el-table-column
           align="center"
           prop="name"
@@ -42,32 +37,40 @@
         </el-table-column>
         <el-table-column align="center" label="操作" width="120">
           <template slot-scope="scope">
-            <el-dropdown split-button @click="handleViewDetail(scope.row)">
+            <el-dropdown split-button @click="setContent(scope.row)">
               编辑
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="handleDelete(scope.row)">删除</el-dropdown-item>
-                <el-dropdown-item @click.native="setContent(scope.row)">设置测试内容</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <el-dialog
-      :visible.sync="dialogVisible"
-      title="新增测试项目"
-      width="30%">
+
+    <el-drawer
+      :visible.sync="drawer"
+      :show-close="false"
+      :before-close="handleClose">
+      <template slot="title">
+        <span v-if="projectParam.id === 0">新增测试项目</span>
+        <span v-else>修改测试项目</span>
+      </template>
       <div style="margin-top:20px">
-        <span class="metaTitle">请上传封面：</span>
+        <span class="metaTitle">请上传封面(限制4张)：</span>
         <el-upload
           ref="upload"
           :on-success="handleSuccessForCover"
           :file-list="fileList"
+          :limit="4"
+          :on-exceed="handleExceed"
+          :on-remove="handleRemoveForShowPic"
+          :before-remove="beforeRemove"
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF"
           class="upload-demo"
-          action="http://120.26.88.248:8082/common/uploadFile">
+          action="http://120.26.88.248:8082/common/uploadFile"
+          list-type="picture-card">
           <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </div>
       <div style="margin-top:20px">
@@ -110,39 +113,45 @@
         <el-upload
           ref="upload"
           :on-success="handleSuccessForDetail"
+          :on-remove="handleRemoveForDetailPic"
+          :before-remove="beforeRemove"
           :file-list="detailList"
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF"
           class="upload-demo"
-          action="http://120.26.88.248:8082/common/uploadFile">
+          action="http://120.26.88.248:8082/common/uploadFile"
+          list-type="picture-card">
           <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="createComment">确 定</el-button>
-      </span>
-    </el-dialog>
-    <el-drawer
-      :visible.sync="drawer"
-      :show-close="false"
-      title="我是标题">
-      <el-checkbox-group v-model="projectParam.contentIdList">
-        <el-checkbox v-for="item in contentList" :key="item.id" :label="item.name"/>
-      </el-checkbox-group>
+      <div v-if="projectParam.id!== 0" style="margin-top:20px">
+        <div class="metaTitle">请选择测试内容:</div>
+        <!-- <el-checkbox-group v-model="projectParam.contentIdList">
+          <el-checkbox v-for="item in contentList" :key="item.id" :label="item.name"/>
+        </el-checkbox-group> -->
+        <el-select v-model="projectParam.contentIdList" multiple placeholder="请选择" style="width:100%">
+          <el-option
+            v-for="item in contentList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"/>
+        </el-select>
+      </div>
+      <div class="demo-drawer__footer">
+        <el-button type="primary" @click="submitContent">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+      </div>
     </el-drawer>
   </div>
 </template>
 
 <script>
-import { getAllPorject, addPorject, getAllPorjectType, deletePorject } from '../../api/project'
+import { getAllPorject, addPorject, getAllPorjectType, deletePorject, updatePorject } from '../../api/project'
 import { getAllContent } from '../../api/content'
 
 export default {
   data() {
     return {
       drawer: false,
-      dialogVisible: false,
       projectParam: {},
       projectList: [],
       fileList: [],
@@ -156,10 +165,22 @@ export default {
     this.fetchData()
   },
   methods: {
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除该图片码？`)
+    },
+    handleRemoveForShowPic(file, fileList) {
+      this.projectParam.showPicture = fileList.map(item => {
+        return item.url
+      }).join('||')
+    },
+    handleRemoveForDetailPic(file, fileList) {
+      this.projectParam.detailPicture = fileList.map(item => {
+        return item.url
+      }).join('||')
+    },
     fetchData() {
       getAllPorject().then(res => {
         if (res.data.code === '200') {
-          // console.log(res.data.data)
           this.projectList = res.data.data
         } else {
           this.$notify({
@@ -169,14 +190,11 @@ export default {
         }
       })
       getAllPorjectType().then(res => {
-        res.data.data.forEach(element => {
-          this.projectTypeList.push(element)
-        })
+        this.projectTypeList = res.data.data
       })
       getAllContent().then(res => {
         if (res.data.code === '200') {
           this.contentList = res.data.data
-          console.log(this.contentList)
         } else {
           this.$notify({
             title: '提示',
@@ -185,17 +203,51 @@ export default {
         }
       })
     },
-    handleViewDetail(id) {
-      // this.$router.push({ name: 'projectDetail', params: { id: id }})
-      this.dialogVisible = true
-      this.projectParam = id
+    clickAddButton() {
+      this.drawer = true
+      this.projectParam = { id: 0, deleted: false }
     },
-    createComment() {
-      addPorject(this.projectParam).then(res => {
-        this.projectParam = {}
-        this.dialogVisible = false
-        this.fetchData()
-      })
+    handleCancel() {
+      this.projectParam = {}
+      this.fileList = []
+      this.detailList = []
+      this.fetchData()
+      this.drawer = false
+    },
+    handleClose(done) {
+      this.projectParam = { deleted: false }
+      this.fileList = []
+      this.detailList = []
+      this.fetchData()
+      done()
+    },
+    submitContent() {
+      this.projectParam.deleted = false
+      if (this.projectParam.id === 0) {
+        addPorject(this.projectParam).then(res => {
+          if (res.data.code === '200') {
+            this.$notify({
+              title: '提示',
+              message: '新增测试项目成功'
+            })
+          }
+          this.fetchData()
+        })
+      } else {
+        updatePorject(this.projectParam).then(res => {
+          if (res.data.code === '200') {
+            this.$notify({
+              title: '提示',
+              message: '修改测试项目成功'
+            })
+          }
+          this.fetchData()
+        })
+      }
+      this.projectParam = { deleted: false }
+      this.detailList = []
+      this.fileList = []
+      this.drawer = false
     },
     handleSuccessForCover(res, file, fileList) {
       if (res.code === '200') {
@@ -204,7 +256,6 @@ export default {
           message: '附件上传成功'
         })
         this.projectParam.showPicture = this.projectParam.showPicture ? this.projectParam.showPicture + '||' + res.data : res.data
-        console.log(this.projectParam)
       }
     },
     handleSuccessForDetail(res, file, fileList) {
@@ -214,11 +265,9 @@ export default {
           message: '附件上传成功'
         })
         this.projectParam.detailPicture = this.projectParam.detailPicture ? this.projectParam.detailPicture + '||' + res.data : res.data
-        console.log(this.projectParam)
       }
     },
     handleDelete(item) {
-      console.log(item)
       this.$confirm('此操作将永久删除该项目, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -241,6 +290,27 @@ export default {
     setContent(item) {
       this.drawer = true
       this.projectParam = item
+      var detailPictures = item.detailPicture ? item.detailPicture.split('||') : []
+      var detailPictureList = this.handlePictures(detailPictures)
+      var showPictures = item.showPicture ? item.showPicture.split('||') : []
+      var showPictureList = this.handlePictures(showPictures)
+      detailPictureList.forEach(element => {
+        this.detailList.push({ url: element })
+      })
+      showPictureList.forEach(element => {
+        this.fileList.push({ url: element })
+      })
+    },
+    handlePictures(list) {
+      list.forEach(function(pic, index, arr) {
+        if (pic.indexOf('http') === -1) {
+          arr[index] = 'http://' + pic
+        }
+      })
+      return list
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 4 个文件`)
     }
   }
 }

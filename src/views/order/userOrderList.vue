@@ -135,7 +135,6 @@ export default {
     fetchData() {
       var userId = JSON.parse(sessionStorage.getItem('userInfo')).id
       getAllOrderByUserId(parseInt(userId)).then(res => {
-        console.log(res)
       })
     },
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {

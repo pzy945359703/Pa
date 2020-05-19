@@ -166,7 +166,6 @@ export default {
     fetchData() {
       getOrderInfo(this.orderId).then(res => {
         var orderItem = res.data.data
-        console.log(typeof orderItem.status)
         this.projectId = orderItem.projectId
         this.CommentParams.projectId = this.projectId
         this.createOrderTime = new Date(new Date(orderItem.createTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
@@ -209,20 +208,17 @@ export default {
     },
     createComment() {
       addComment(this.CommentParams).then(res => {
-        console.log(res)
         this.CommentParams = {}
         this.dialogVisible = false
       })
     },
     handleSuccess(res, file, fileList) {
-      console.log(res)
       if (res.code === '200') {
         this.$notify({
           title: '提示',
           message: '附件上传成功'
         })
         this.CommentParams.picture = this.CommentParams.picture ? this.CommentParams.picture + '||' + res.data : res.data
-        console.log(this.CommentParams)
       }
     }
   }

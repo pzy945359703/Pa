@@ -61,7 +61,6 @@ export default {
   },
   beforeMount() {
     this.userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
-    console.log(this.userInfo)
     this.orderInfo.userId = this.userInfo.id
     this.orderInfo.projectId = this.$route.params.projectId
     getPorjectInfo({ id: this.$route.params.projectId }).then(res => {
@@ -75,7 +74,6 @@ export default {
   methods: {
     submitOrder() {
       addOrder(this.orderInfo).then(res => {
-        console.log(res)
       })
     }
   }

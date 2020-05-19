@@ -209,7 +209,6 @@ export default {
       getAllCommentByPrjectId(parseInt(this.id)).then(res => {
         this.commomentList = res.data.data
         this.commomentList.forEach(item => {
-          console.log(item)
           item.pictureList = item.picture ? item.picture.split('||') : []
         })
         this.commentCount = this.commomentList.length

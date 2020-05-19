@@ -77,7 +77,7 @@
           show-word-limit/>
       </div>
       <div style="margin:20px 0">
-        <span class="metaTitle">请上传详情图片：</span>
+        <span class="metaTitle">请上传详情图片(限制1张)：</span>
         <el-upload
           ref="upload"
           :on-success="handleSuccessForDetail"
@@ -89,7 +89,7 @@
           accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF"
           class="upload-demo"
           action="http://120.26.88.248:8082/common/uploadFile"
-          list-type="picture">
+          list-type="picture-card">
           <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
@@ -124,13 +124,6 @@ export default {
       getAllContent().then(res => {
         if (res.data.code === '200') {
           this.contentList = res.data.data
-          console.log(this.contentList)
-        //   this.contentList.forEach(element => {
-        //     element.createTime = new Date(new Date(element.createTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        //     element.orderCompleteTime = element.orderCompleteTime == null ? '无' : new Date(new Date(element.orderCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        //     element.testCompleteTime = element.testCompleteTime == null ? '无' : new Date(new Date(element.testCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        //     element.testPredictTime = element.testPredictTime == null ? '无' : new Date(new Date(element.testPredictTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        //   })
         } else {
           this.$notify({
             title: '提示',
@@ -147,7 +140,6 @@ export default {
       this.$message.warning(`当前限制选择 1 个文件`)
     },
     handleViewDetail(item) {
-      // this.$router.push({ name: 'orderItem', params: { id: id }})
       this.drawer = true
       this.contentParam = item
       this.fileList = item.picture ? [{ url: item.picture }] : []
@@ -196,38 +188,14 @@ export default {
           message: '附件上传成功'
         })
         this.contentParam.detailPicture = this.contentParam.detailPicture ? this.contentParam.detailPicture + '||' + res.data : res.data
-        console.log(fileList)
       }
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除该图片码？`)
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList)
       this.contentParam.picture = ''
     }
-    // handleDelete(item) {
-    //   console.log(item)
-    //   this.$confirm('此操作将永久删除该订单, 是否继续?', '提示', {
-    //     confirmButtonText: '确定',
-    //     cancelButtonText: '取消',
-    //     type: 'warning'
-    //   }).then(() => {
-    //     deleteOrder(item.id).then(res => {
-    //       this.$message({
-    //         type: 'success',
-    //         message: '删除成功!'
-    //       })
-    //       this.fetchData()
-    //     })
-    //   }).catch(() => {
-    //     this.$message({
-    //       type: 'info',
-    //       message: '已取消删除'
-    //     })
-    //   })
-    // }
-
   }
 }
 </script>
