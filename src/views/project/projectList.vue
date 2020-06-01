@@ -56,7 +56,7 @@
         <span v-if="projectParam.id === 0">新增测试项目</span>
         <span v-else>修改测试项目</span>
       </template>
-      <div style="margin-top:20px">
+      <div>
         <span class="metaTitle">请上传封面(限制4张)：</span>
         <el-upload
           ref="upload"
@@ -317,9 +317,6 @@ export default {
 </script>
 
 <style scoped>
-.test-detail {
-    margin-top: 20px;
-}
 .metaTitle {
     color: #838383;
     font-size:12px;

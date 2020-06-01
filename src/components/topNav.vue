@@ -6,15 +6,15 @@
           <!-- <el-menu-item index="1">登陆</el-menu-item> -->
           <el-menu-item index="/home/index/true/1">主页</el-menu-item>
           <!-- <el-menu-item index="/personalCenter/changePassword">个人中心</el-menu-item> -->
-          <el-submenu index="personalCenter">
+          <el-menu-item index="/login" style="float:right">退出</el-menu-item>
+          <el-submenu index="personalCenter" style="float:right">
             <template slot="title">{{ userName }}</template>
             <el-menu-item index="/home/myOrderList">我的订单</el-menu-item>
             <el-menu-item index="/home/personalCenter/changePassword">修改密码</el-menu-item>
           </el-submenu>
-          <el-menu-item index="/home/projectList">项目管理</el-menu-item>
-          <el-menu-item index="/home/orderList">订单管理</el-menu-item>
-          <el-menu-item index="/home/contentList">测试内容管理</el-menu-item>
-          <el-menu-item index="/login" style="float:right">退出</el-menu-item>
+          <el-menu-item v-if="hasPermission" index="/home/projectList">项目管理</el-menu-item>
+          <el-menu-item v-if="hasPermission" index="/home/orderList">订单管理</el-menu-item>
+          <el-menu-item v-if="hasPermission" index="/home/contentList">测试内容管理</el-menu-item>
         </el-menu>
       </div>
     </div>
@@ -33,8 +33,14 @@ export default {
     return {
       activeIndex: 'myOrderList',
       input3: '',
-      userName: JSON.parse(sessionStorage.getItem('userInfo')).nikename
+      userName: '',
+      hasPermission: true
     }
+  },
+  mounted() {
+    var userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+    this.userName = userInfo.nikename
+    this.hasPermission = userInfo.permission === 'admin'
   },
   methods: {
     queryProject() {

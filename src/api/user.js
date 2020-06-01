@@ -23,3 +23,11 @@ export function changePassword(param) {
     data: param
   })
 }
+
+export function getUserInfo(userId) {
+  return _axios.request({
+    url: baseUrl + 'user/info',
+    method: 'post',
+    data: { id: userId }
+  })
+}

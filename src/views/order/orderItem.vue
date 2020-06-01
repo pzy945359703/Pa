@@ -9,12 +9,13 @@
         <span>下单时间：{{ createOrderTime }}</span>
         <div style="float:right">
           <!-- <el-button round size="small">申请售后</el-button> -->
-          <el-button round size="small">打印测试结果</el-button>
+          <el-button v-if="status===3||status===4" round size="small" @click="downloadFile">打印测试结果</el-button>
           <el-button round size="small" @click="dialogVisible = true">评价</el-button>
         </div>
       </div>
-      <el-steps :active="4" align-center finish-status="success">
+      <el-steps :active="status" align-center finish-status="success">
         <el-step :description="createOrderTime" title="提交订单"/>
+        <el-step :description="testPredictTime" title="商家确认时间"/>
         <el-step :description="testCompleteTime" title="测试完成"/>
         <!-- <el-step title="测试完成" /> -->
         <el-step :description="orderCompleteTime" title="订单完成" />
@@ -96,6 +97,7 @@
 import { getOrderInfo } from '../../api/order'
 import { getPorjectInfo } from '../../api/project'
 import { addComment } from '../../api/comment'
+import { download } from '../../api/param'
 
 export default {
   data() {
@@ -103,40 +105,12 @@ export default {
       dialogVisible: false,
       projectId: 0,
       orderId: 0,
+      status: 0,
       createOrderTime: '2020-03-21 17:08:35',
       testCompleteTime: '2020-03-22 17:08:35',
       orderCompleteTime: '2020-03-26 17:08:35',
+      testPredictTime: '',
       contentList: [],
-      tableData: [
-        {
-          content: '悬停精度',
-          unitPrice: 200,
-          amount: 1,
-          subTotal: 200,
-          actualPayment: 200
-        },
-        {
-          content: '最大高度',
-          unitPrice: 100,
-          amount: 1,
-          subTotal: 100,
-          actualPayment: 100
-        },
-        {
-          content: '爬升率',
-          unitPrice: 200,
-          amount: 2,
-          subTotal: 400,
-          actualPayment: 200
-        },
-        {
-          content: '下降率',
-          unitPrice: 300,
-          amount: 1,
-          subTotal: 300,
-          actualPayment: 200
-        }
-      ],
       CommentParams: {
         userId: JSON.parse(sessionStorage.getItem('userInfo')).id,
         type: '',
@@ -163,14 +137,30 @@ export default {
     this.fetchData()
   },
   methods: {
+    timefilters(val) {
+      if (val === null || val === '') {
+        return '暂无时间'
+      } else {
+        const d = new Date(val) // val 为表格内取到的后台时间
+        const month = d.getMonth() + 1 < 10 ? '0' + (d.getMonth() + 1) : d.getMonth() + 1
+        const day = d.getDate() < 10 ? '0' + d.getDate() : d.getDate()
+        const hours = d.getHours() < 10 ? '0' + d.getHours() : d.getHours()
+        const min = d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes()
+        const sec = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds()
+        const times = d.getFullYear() + '-' + month + '-' + day + ' ' + hours + ':' + min + ':' + sec
+        return times
+      }
+    },
     fetchData() {
       getOrderInfo(this.orderId).then(res => {
         var orderItem = res.data.data
+        this.status = parseInt(orderItem.status)
         this.projectId = orderItem.projectId
         this.CommentParams.projectId = this.projectId
-        this.createOrderTime = new Date(new Date(orderItem.createTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        this.testCompleteTime = orderItem.testCompleteTime == null ? '' : new Date(new Date(orderItem.testCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
-        this.orderCompleteTime = orderItem.orderCompleteTime == null ? '' : new Date(new Date(orderItem.orderCompleteTime) + 8 * 1000 * 3600).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '')
+        this.createOrderTime = this.timefilters(orderItem.createTime)
+        this.testCompleteTime = this.timefilters(orderItem.testCompleteTime)
+        this.orderCompleteTime = this.timefilters(orderItem.orderCompleteTime)
+        this.testPredictTime = this.timefilters(orderItem.testPredictTime)
         getPorjectInfo({ id: this.projectId }).then(res => {
           this.projectInfo = res.data.data
           this.contentList = this.projectInfo.contentList
@@ -220,6 +210,21 @@ export default {
         })
         this.CommentParams.picture = this.CommentParams.picture ? this.CommentParams.picture + '||' + res.data : res.data
       }
+    },
+    downloadFile() {
+      download(this.orderId).then(res => {
+        const blob = res.data
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onload = (e) => {
+          const a = document.createElement('a')
+          a.setAttribute('download', '测试结果.pdf')
+          a.href = e.target.result
+          document.body.appendChild(a)
+          a.click()
+          document.body.removeChild(a)
+        }
+      })
     }
   }
 }

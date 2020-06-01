@@ -32,6 +32,9 @@ html,body,#app {
 .white-word {
   color:#ffffff
 }
+.el-drawer.rtl{
+    overflow: scroll
+}
 /* #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

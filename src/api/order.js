@@ -45,3 +45,11 @@ export function deleteOrder(id) {
   })
 }
 
+// 修改订单状态
+export function uploadStatus(data) {
+  return _axios.request({
+    url: baseUrl + 'order/uploadStatus',
+    method: 'post',
+    data: data
+  })
+}

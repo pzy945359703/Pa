@@ -1,13 +1,13 @@
 <template>
   <div style="padding:20px 15%">
-    <!-- <div>
-      <el-carousel height="150px">
-        <el-carousel-item v-for="item in carousel" :key="item.title">
-          <h3 class="small">{{ item.title }}</h3>
-          <h4>{{ item.subTitle }}</h4>
+    <div>
+      <el-carousel type="card" height="330px">
+        <el-carousel-item v-for="(item,index) in carousel" :key="index" @click.native="detailView(item.id)">
+          <!-- <h3 class="small">{{ item.title }}</h3> -->
+          <img :src="'http://'+item.src" class="carousel-image" >
         </el-carousel-item>
       </el-carousel>
-    </div> -->
+    </div>
     <!-- <div class="white-panel">
       <div align="center" class="pannel-title" >
         <p>
@@ -47,14 +47,9 @@ export default {
     return {
       number: 0,
       carousel: [
-        {
-          title: 'Follow_me',
-          subTitle: '通过机载摄像头'
-        },
-        {
-          title: 'Follow_me2',
-          subTitle: '通过机载摄像头'
-        }
+        { src: '120.26.88.248/photo/a03e62ed-60a2-4657-b135-171329166017.jpg', id: 10 },
+        { src: '120.26.88.248/photo/16220329-f75a-43fa-baeb-88b1b59ae725.jpg', id: 16 },
+        { src: '120.26.88.248/photo/fd5635b7-52db-41e8-b57e-88cd0ad8bf23.jpg', id: 4 }
       ],
       porjectList: [],
       projectTypeList: ['全部']
@@ -102,7 +97,7 @@ export default {
     handlePictures(res) {
       this.porjectList = res.data.data
       this.porjectList.forEach(element => {
-        element.showPictureList = element.showPicture.split('||')
+        element.showPictureList = element.showPicture ? element.showPicture.split('||') : []
         element.showPictureList.forEach(function(pic, index, arr) {
           if (pic.indexOf('http') === -1) {
             arr[index] = 'http://' + pic
@@ -159,5 +154,8 @@ export default {
   .projetcName{
     font-weight: 700;
     padding-bottom: 10px;
+  }
+  .carousel-image {
+    width: 100%;
   }
 </style>

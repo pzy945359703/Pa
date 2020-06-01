@@ -74,6 +74,13 @@ export default {
   methods: {
     submitOrder() {
       addOrder(this.orderInfo).then(res => {
+        if (res.data.code === '200') {
+          this.$notify({
+            title: '提示',
+            message: '订单提交成功'
+          })
+        }
+        this.$router.push({ name: 'index', params: { showAll: 'true', queryName: 'a' }})
       })
     }
   }
